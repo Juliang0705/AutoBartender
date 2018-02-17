@@ -21,7 +21,24 @@ def app_description():
     description = """Hello! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
     you can say something like Alexa, ask Auto Bartender to make a vodka with coke.
     """
-    return make_response(description)
+    response = {
+        'version': '1.0',
+        'sessionAttributes': {},
+        'response': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': description
+            },
+        'shouldEndSession': False,
+        "reprompt": {
+            "outputSpeech": {
+                "type": "PlainText",
+                "text": "What can I do for you?"
+                }
+            }
+        }
+    }
+    return json.dumps(response)
 
 def process_order(first_drink, second_drink):
     if first_drink and second_drink:
@@ -54,4 +71,4 @@ def order():
 def index():
     return "Hello world"
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="11111")
+    app.run(host="0.0.0.0", port=11111)
