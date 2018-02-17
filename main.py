@@ -20,7 +20,7 @@ def make_response(msg):
 
 
 def app_description():
-    description = """Howdy! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
+    description = """Many howdies! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
     you can say something like make me a mixed drink.
     """
     response = {
@@ -43,16 +43,57 @@ def app_description():
     return json.dumps(response)
 
 
+class DispenseAdpater(object):
+    drink_table = {
+        "yellow": 0,
+        "red": 1,
+        "green": 2,
+        "blue": 3
+    }
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def disp(arg1, arg2=None):
+        if arg2 is None:
+            DispenseAdpater.disp_single(arg1)
+            return
+        first_drink, first_percent = arg1
+        second_drink, second_percent = arg2
+        if first_drink.lower() not in DispenseAdpater.drink_table or second_drink.lower() not in DispenseAdpater.drink_table:
+            raise Exception("Your drink choice of {} and {} is curently not supported.".format(
+                first_drink, second_drink))
+        else:
+            first_percent /= 100.0
+            second_percent /= 100.0
+            print "{},{},{},{}".format(first_drink, first_percent, second_drink, second_percent)
+
+    @staticmethod
+    def disp_single(arg1):
+        first_drink, first_percent = arg1
+        if first_drink.lower() not in DispenseAdpater.drink_table:
+            raise Exception(
+                "Your drink choice of {} is curently not supported.".format(first_drink))
+        else:
+            first_percent /= 100.0
+            print "{}, {}".format(first_drink, first_percent)
+
+
 def process_order(first_drink, first_percent, second_drink, second_percent):
     try:
-        if first_drink and second_drink and second_drink and second_percent:
-            return make_response("Your mixed drink order {} percent {} with {} percent {} is currently being processed.".format(first_percent,first_drink, second_percent, second_drink))
+        if first_drink and first_percent and second_drink and second_percent:
+            DispenseAdpater.disp((first_drink, first_percent),
+                                 (second_drink, second_percent))
+            return make_response("Your mixed drink order {} percent {} with {} percent {} is currently being processed.".format(first_percent, first_drink, second_percent, second_drink))
         elif first_drink:
+            DispenseAdpater.disp((first_drink, 100))
             return make_response("Your drink order {} is currently being processed.".format(first_drink))
         else:
             return make_response("Sorry I don't understand your order yet.")
     except Exception as e:
         return make_response(e.message)
+
 
 def ask_for_more_response():
     response = {
@@ -72,35 +113,38 @@ def ask_for_more_response():
 
 @app.route('/order', methods=['POST', 'GET'])
 def order():
-    print request.json
-    req = request.json
-    first_drink = None
-    first_percent = 100
-    second_drink = None
-    second_percent = 0
-    if req.get('type', '') == 'IntentRequest':
-        intent = req.get('intent', {})
-        if intent.get('name', '') == 'SingleOrder':
-            first_drink = intent.get('slots', {}).get(
-                'single_drink', {}).get('value', None)
-            if first_drink is None:
-                return ask_for_more_response()
-        elif intent.get('name', '') == 'DoubleOrder':
-            first_drink = intent.get('slots', {}).get(
-                'first_drink', {}).get('value', None)
-            second_drink = intent.get('slots', {}).get(
-                'second_drink', {}).get('value', None)
-            first_percent = int(intent.get('slots', {}).get(
-                'first_percent', {}).get('value', 0))
-            second_percent = 100 - first_percent
-            if not (first_drink and second_drink and first_percent and second_percent):
-                return ask_for_more_response()
-        return process_order(first_drink, first_percent, second_drink, second_percent)
-    elif req.get('type', '') == 'LaunchRequest':
-        return app_description()
-    elif req.get('type', '') == 'SessionEndedRequest':
-        return make_response("No worries. Let me know if you need another drink. Good bye.")
-    return make_response("Unrecognized request")
+    try:
+        print request.json
+        req = request.json
+        first_drink = None
+        first_percent = 100
+        second_drink = None
+        second_percent = 0
+        if req.get('type', '') == 'IntentRequest':
+            intent = req.get('intent', {})
+            if intent.get('name', '') == 'SingleOrder':
+                first_drink = intent.get('slots', {}).get(
+                    'single_drink', {}).get('value', None)
+                if first_drink is None:
+                    return ask_for_more_response()
+            elif intent.get('name', '') == 'DoubleOrder':
+                first_drink = intent.get('slots', {}).get(
+                    'first_drink', {}).get('value', None)
+                second_drink = intent.get('slots', {}).get(
+                    'second_drink', {}).get('value', None)
+                first_percent = int(intent.get('slots', {}).get(
+                    'first_percent', {}).get('value', 0))
+                second_percent = 100 - first_percent
+                if not (first_drink and second_drink and first_percent and second_percent):
+                    return ask_for_more_response()
+            return process_order(first_drink, first_percent, second_drink, second_percent)
+        elif req.get('type', '') == 'LaunchRequest':
+            return app_description()
+        elif req.get('type', '') == 'SessionEndedRequest':
+            return make_response("No worries. Let me know if you need another drink. Good bye.")
+        return make_response("Unrecognized request")
+    except Exception as e:
+        return make_response(e.message)
 
 
 @app.route('/')
