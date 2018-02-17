@@ -20,8 +20,8 @@ def make_response(msg):
 
 
 def app_description():
-    description = """Hello! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
-    you can say something like Alexa, ask Auto Bartender to make a vodka with coke.
+    description = """Howdy! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
+    you can say something like make me a mixed drink.
     """
     response = {
         'version': '1.0',
@@ -90,10 +90,9 @@ def order():
                 'first_drink', {}).get('value', None)
             second_drink = intent.get('slots', {}).get(
                 'second_drink', {}).get('value', None)
-            first_percent = intent.get('slots', {}).get(
-                'first_percent', {}).get('value', None)
-            second_percent = intent.get('slots', {}).get(
-                'second_percent', {}).get('value', None)
+            first_percent = int(intent.get('slots', {}).get(
+                'first_percent', {}).get('value', 0))
+            second_percent = 100 - first_percent
             if not (first_drink and second_drink and first_percent and second_percent):
                 return ask_for_more_response()
         return process_order(first_drink, first_percent, second_drink, second_percent)
