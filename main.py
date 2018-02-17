@@ -17,6 +17,12 @@ def make_response(msg):
     }
     return json.dumps(response)
 
+def app_description():
+    description = """Hello! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
+    you can say something like Alexa, ask Auto Bartender to make a vodka with coke.
+    """
+    return make_response(description)
+
 def process_order(first_drink, second_drink):
     if first_drink and second_drink:
         return make_response("Your drink order {} with {} is currently being processed.".format(first_drink, second_drink))
@@ -39,7 +45,10 @@ def order():
         elif intent.get('name', '') == 'DoubleOrder':
             first_drink = intent.get('slots', {}).get('first_drink', {}).get('value', {})
             second_drink = intent.get('slots', {}).get('second_drink', {}).get('value', {})
-    return process_order(first_drink, second_drink)
+        return process_order(first_drink, second_drink)
+    elif req.get('type', '') == 'LaunchRequest':
+        return app_description()
+    return make_response("Unrecognized request")
 
 @app.route('/')
 def index():
