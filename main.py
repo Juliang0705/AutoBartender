@@ -91,7 +91,7 @@ class DispenseAdpater(object):
     @staticmethod
     def disp_single(arg1):
         first_drink, first_percent = arg1
-        if first_drink.lower() == "tide pod shot":
+        if first_drink.lower() == "tide pod shot" or first_drink.lower() == "tide pods shot":
             t = threading.Thread(target=DispenseAdpater.disp_async, args=[(1,0.3), (2,0.4), (3, 0.4)])
             t.start()
         elif first_drink.lower() not in DispenseAdpater.drink_table:
