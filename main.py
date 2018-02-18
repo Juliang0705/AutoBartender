@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, render_template
 import json
 import dispense
+import threading
+
 app = Flask(__name__)
 
 
@@ -58,6 +60,11 @@ class DispenseAdpater(object):
 
     def __init__(self):
         pass
+    
+    @staticmethod
+    def disp_async(*args):
+        print args
+        dispense.disp(args)
 
     @staticmethod
     def disp(arg1, arg2=None):
@@ -74,8 +81,8 @@ class DispenseAdpater(object):
             first_drink_index = DispenseAdpater.drink_table[first_drink.lower()]
             second_percent /= 100.0
             second_drink_index = DispenseAdpater.drink_table[second_drink.lower()]
-            print "{},{},{},{}".format(first_drink_index, first_percent, second_drink_index, second_percent)
-            dispense.disp((first_drink_index, first_percent), (second_drink_index, second_percent))
+            t = threading.Thread(target=DispenseAdpater.disp_async, args=[(first_drink_index, first_percent), (second_drink_index, second_percent)])
+            t.start()
 
     @staticmethod
     def disp_single(arg1):
@@ -86,8 +93,8 @@ class DispenseAdpater(object):
         else:
             first_percent /= 100.0
             first_drink_index = DispenseAdpater.drink_table[first_drink.lower()]
-            print "{}, {}".format(first_drink_index, first_percent)
-            dispense.disp((first_drink_index, first_percent))
+            t = threading.Thread(target=DispenseAdpater.disp_async, args=[(first_drink_index, first_percent)])
+            t.start()
 
 def process_order(first_drink, first_percent, second_drink, second_percent):
     try:
