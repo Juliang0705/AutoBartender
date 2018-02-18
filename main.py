@@ -52,10 +52,14 @@ class DispenseAdpater(object):
         "sprite": 1,
         "yellow": 2,
         "vodka": 2,
+        "lemonade":2,
+        "soylent":2,
         "blue": 3,
+        "pepsi":3,
+        "coke":3,
         "rum": 3,
         "red": 4,
-        "coke": 4
+        "fanta": 4
     }
 
     def __init__(self):
