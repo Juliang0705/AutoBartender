@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 import json
+import dispense
 app = Flask(__name__)
 
 
@@ -74,6 +75,7 @@ class DispenseAdpater(object):
             second_percent /= 100.0
             second_drink_index = DispenseAdpater.drink_table[second_drink.lower()]
             print "{},{},{},{}".format(first_drink_index, first_percent, second_drink_index, second_percent)
+            dispense.disp((first_drink_index, first_percent), (second_drink_index, second_percent))
 
     @staticmethod
     def disp_single(arg1):
@@ -85,7 +87,7 @@ class DispenseAdpater(object):
             first_percent /= 100.0
             first_drink_index = DispenseAdpater.drink_table[first_drink.lower()]
             print "{}, {}".format(first_drink_index, first_percent)
-
+            dispense.disp((first_drink_index, first_percent))
 
 def process_order(first_drink, first_percent, second_drink, second_percent):
     try:
