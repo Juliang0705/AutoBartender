@@ -45,10 +45,10 @@ def app_description():
 
 class DispenseAdpater(object):
     drink_table = {
-        "yellow": 0,
-        "red": 1,
-        "green": 2,
-        "blue": 3
+        "green": 1,
+        "yellow": 2,
+        "blue": 3,
+        "red": 4
     }
 
     def __init__(self):
@@ -62,27 +62,32 @@ class DispenseAdpater(object):
         first_drink, first_percent = arg1
         second_drink, second_percent = arg2
         if first_drink.lower() not in DispenseAdpater.drink_table or second_drink.lower() not in DispenseAdpater.drink_table:
-            raise Exception("Your drink choice of {} and {} is curently not supported.".format(
+            raise Exception("Your drink choice of {} and {} is curently not supported. You should have known that. Go home. You are drunk.".format(
                 first_drink, second_drink))
         else:
             first_percent /= 100.0
+            first_drink_index = DispenseAdpater.drink_table[first_drink.lower()]
             second_percent /= 100.0
-            print "{},{},{},{}".format(first_drink, first_percent, second_drink, second_percent)
+            second_drink_index = DispenseAdpater.drink_table[second_drink.lower()]
+            print "{},{},{},{}".format(first_drink_index, first_percent, second_drink_index, second_percent)
 
     @staticmethod
     def disp_single(arg1):
         first_drink, first_percent = arg1
         if first_drink.lower() not in DispenseAdpater.drink_table:
             raise Exception(
-                "Your drink choice of {} is curently not supported.".format(first_drink))
+                "Your drink choice of {} is curently not supported. You should have known that. Go home. You are drunk.".format(first_drink))
         else:
             first_percent /= 100.0
-            print "{}, {}".format(first_drink, first_percent)
+            first_drink_index = DispenseAdpater.drink_table[first_drink.lower()]
+            print "{}, {}".format(first_drink_index, first_percent)
 
 
 def process_order(first_drink, first_percent, second_drink, second_percent):
     try:
         if first_drink and first_percent and second_drink and second_percent:
+            if (not(0 <= first_percent <= 100 and 0 <= second_percent <= 100)):
+                raise Exception("Percentage error. Go home. You are drunk.")
             DispenseAdpater.disp((first_drink, first_percent),
                                  (second_drink, second_percent))
             return make_response("Your mixed drink order {} percent {} with {} percent {} is currently being processed.".format(first_percent, first_drink, second_percent, second_drink))
