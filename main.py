@@ -24,7 +24,7 @@ def make_response(msg):
 
 def app_description():
     description = """Many howdies! Welcome to Auto Bartender. I'm your personal drink maker. To get started,
-    you can say something like make me a mixed drink.
+    you can say something like make me a drink or make me a mixed drink.
     """
     response = {
         'version': '1.0',
@@ -91,7 +91,10 @@ class DispenseAdpater(object):
     @staticmethod
     def disp_single(arg1):
         first_drink, first_percent = arg1
-        if first_drink.lower() not in DispenseAdpater.drink_table:
+        if first_drink.lower() == "tide pod shot":
+            t = threading.Thread(target=DispenseAdpater.disp_async, args=[(1,0.3), (2,0.4), (3, 0.4)])
+            t.start()
+        elif first_drink.lower() not in DispenseAdpater.drink_table:
             raise Exception(
                 "Your drink choice of {} is curently not supported. You should have known that. Go home. You are drunk.".format(first_drink))
         else:

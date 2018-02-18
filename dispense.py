@@ -19,9 +19,10 @@ def get_fill():
 	res = read_load.getLoad()/-2570.0
 	return res
 
-def disp(*args):
+def disp(args):
+        print args
 	try:
-		if sum([part for (drink, part) in args]) > 1:
+		if sum([arg[1] for arg in args]) > 1:
 			raise Exception("Drink proportions add up to more than 100%!")
 		for drink, part in args:
 			if drink < 1 or drink > 4:
