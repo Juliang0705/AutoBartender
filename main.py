@@ -46,9 +46,13 @@ def app_description():
 class DispenseAdpater(object):
     drink_table = {
         "green": 1,
+        "sprite": 1,
         "yellow": 2,
+        "vodka": 2,
         "blue": 3,
-        "red": 4
+        "rum": 3,
+        "red": 4,
+        "coke": 4
     }
 
     def __init__(self):
